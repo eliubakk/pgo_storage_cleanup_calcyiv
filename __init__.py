@@ -10,10 +10,14 @@ ops = {
 scans_by_name = {}
 scans_by_GL_Evo = {}
 scans_by_UL_Evo = {}
+shadow_scans_by_GL_Evo = {}
+shadow_scans_by_UL_Evo = {}
 best_iv_scans = {}
 best_LL_scans = {}
-best_GL_scans = {}
-best_UL_scans = {}
+best_shadow_GL_scans = {}
+best_shadow_UL_scans = {}
+best_non_shadow_GL_scans = {}
+best_non_shadow_UL_scans = {}
 
 def filter_scans_by_field(scan_list, field, cast, compare_op):
 	first_valid_idx = 0
@@ -47,10 +51,17 @@ def main():
 		for row in reader:
 			scans_by_name.setdefault(row['Name'],[])
 			scans_by_name[row['Name']].append(row)
-			scans_by_GL_Evo.setdefault(row['GL Evo'],[])
-			scans_by_GL_Evo[row['GL Evo']].append(row)
-			scans_by_UL_Evo.setdefault(row['UL Evo'],[])
-			scans_by_UL_Evo[row['UL Evo']].append(row)
+
+			if 'Shadow' in row['Name']:
+				shadow_scans_by_GL_Evo.setdefault(row['GL Evo'], [])
+				shadow_scans_by_GL_Evo[row['GL Evo']].append(row)
+				shadow_scans_by_UL_Evo.setdefault(row['UL Evo'], [])
+				shadow_scans_by_UL_Evo[row['UL Evo']].append(row)
+			else:
+				scans_by_GL_Evo.setdefault(row['GL Evo'],[])
+				scans_by_GL_Evo[row['GL Evo']].append(row)
+				scans_by_UL_Evo.setdefault(row['UL Evo'],[])
+				scans_by_UL_Evo[row['UL Evo']].append(row)
 
 
 		for (pokemon_name, scan_list) in scans_by_name.items():
@@ -58,12 +69,18 @@ def main():
 			print("*******************Best {} IV Scans:*******************\n".format(pokemon_name), best_iv_scans[pokemon_name], '\n')
 			best_LL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'LL Rank (max)', int, '<')
 			print("*******************Best {} LL Scans:*******************\n".format(pokemon_name), best_LL_scans[pokemon_name], '\n')
+		for (pokemon_name, scan_list) in shadow_scans_by_GL_Evo.items():
+			best_shadow_GL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'GL Rank (max)', int, '<')
+			print("*******************Best {} Shadow GL Scans:*******************\n".format(pokemon_name), best_shadow_GL_scans[pokemon_name], '\n')
+		for (pokemon_name, scan_list) in shadow_scans_by_UL_Evo.items():
+			best_shadow_UL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'UL Rank (max)', int, '<')
+			print("*******************Best {} Shadow UL Scans:*******************\n".format(pokemon_name), best_shadow_UL_scans[pokemon_name], '\n')
 		for (pokemon_name, scan_list) in scans_by_GL_Evo.items():
-			best_GL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'GL Rank (max)', int, '<')
-			print("*******************Best {} GL Scans:*******************\n".format(pokemon_name), best_GL_scans[pokemon_name], '\n')
+			best_non_shadow_GL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'GL Rank (max)', int, '<')
+			print("*******************Best {} GL Scans:*******************\n".format(pokemon_name), best_non_shadow_GL_scans[pokemon_name], '\n')
 		for (pokemon_name, scan_list) in scans_by_UL_Evo.items():
-			best_UL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'UL Rank (max)', int, '<')
-			print("*******************Best {} UL Scans:*******************\n".format(pokemon_name), best_UL_scans[pokemon_name], '\n')
+			best_non_shadow_UL_scans[pokemon_name] = filter_scans_by_field(scan_list, 'UL Rank (max)', int, '<')
+			print("*******************Best {} UL Scans:*******************\n".format(pokemon_name), best_non_shadow_UL_scans[pokemon_name], '\n')
 
 if __name__ == '__main__':
 	main()
